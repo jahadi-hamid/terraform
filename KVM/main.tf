@@ -7,69 +7,95 @@ terraform {
 }
 
 provider "libvirt" {
-  uri = "qemu:///system"
+  uri = "qemu+ssh://root@192.168.1.3/system?sshauth=privkey&keyfile=${var.kvm_privkey}"
 }
 
-resource "libvirt_pool" "ubuntu-kube" {
+
+resource "libvirt_pool" "kvm_storage_pool" {
+
   name = "ubuntu-k8s"
   type = "dir"
-  path = "/home/h.jahadi/tmp-terraform-pool-ubuntu"
+  path = var.storage_pool
 
 }
 
+resource "libvirt_volume" "kvm_ubuntu_volume" {
 
-resource "libvirt_volume" "ubuntu_qvol" {
-  name   = "ubuntu_qvol"
-  pool   = libvirt_pool.ubuntu-kube.name
-  source = "/home/h.jahadi/images/ubuntu-20.04-server-cloudimg-amd64-disk-kvm.img"
+  name   = "ubuntu-2004"
+  pool   = libvirt_pool.kvm_storage_pool.name
+  source = var.ubuntu_img
   format = "qcow2"
 }
 
-data "template_file" "user_data" {
+resource "libvirt_volume" "vm_volume" {
+  count = var.vm_count
+  name   = "k8s-${count.index}"
+  pool   = libvirt_pool.kvm_storage_pool.name
+  base_volume_id = libvirt_volume.kvm_ubuntu_volume.id
+  format = "qcow2"
+}
+
+resource "libvirt_network" "kvm_network" {
+  name = "kubenet"
+  mode = "nat"
+  addresses = ["10.17.3.0/24"]
+  dhcp { 
+    enabled = true 
+    }
+  dns {
+
+    enabled = true
+    local_only = true
+
+  }
+
+}
+
+
+data "template_file" "OS_config" {
+    count = var.vm_count
     template = file("${path.module}/cloud_init.cfg")
+    vars = {
+      hostname = "${var.base_hostname}-${count.index+1}"
+    }
 }
 
 data "template_file" "network_config"{
+
     template = file("${path.module}/network_config.cfg")
 }
 
-resource "libvirt_cloudinit_disk" "commoninit" {
-  name           = "commoninit.iso"
-  user_data      = data.template_file.user_data.rendered
+
+resource "libvirt_cloudinit_disk" "cloud_init" {
+  count = var.vm_count
+  name           = "cloud_init-${count.index}.iso"
+  user_data      = data.template_file.OS_config[count.index].rendered
   network_config = data.template_file.network_config.rendered
-  pool           = libvirt_pool.ubuntu-kube.name
+  pool           = libvirt_pool.kvm_storage_pool.name
 }
 
 resource "libvirt_domain" "k8s" {
-    name = "ubuntu-k8s-01"
-    memory = "2048"
-    vcpu = 2
-
-    cloudinit = libvirt_cloudinit_disk.commoninit.id
-
+    count = var.vm_count
+    name = "${var.base_vm_name}-${count.index+1}"
+    memory = var.memory
+    vcpu = var.cpu
+    cloudinit = libvirt_cloudinit_disk.cloud_init[count.index].id
+    qemu_agent = true
     network_interface {
-      network_name = "NAT"
+      network_id = libvirt_network.kvm_network.id
+      hostname = "${var.base_hostname}-${count.index+1}"
+      wait_for_lease = true
     }
 
-    console {
-        type = "pty"
-        target_port = "0"
-        target_type = "serial"
-    }
-    console {
-        type        = "pty"
-        target_type = "virtio"
-        target_port = "1"
-    }
     disk {
-        volume_id = libvirt_volume.ubuntu_qvol.id
+        volume_id = libvirt_volume.vm_volume[count.index].id
     }
-    graphics {
-        type        = "spice"
-        listen_type = "address"
-        autoport    = true
-    }
+
 }    
+
+output "machin_names" {
+    value = [libvirt_domain.k8s.*.name , libvirt_domain.k8s.*.network_interface.0.addresses]
+}
 
 terraform {
   required_version = ">= 0.12"
