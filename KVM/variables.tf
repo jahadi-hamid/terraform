@@ -4,6 +4,9 @@ variable "vm_count" {
   description = "input number of machine"
 }
 
+variable "kvm_server" {
+  type = string
+}
 variable "kvm_privkey" {
   type = string
 }

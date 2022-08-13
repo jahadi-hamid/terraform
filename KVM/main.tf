@@ -7,7 +7,7 @@ terraform {
 }
 
 provider "libvirt" {
-  uri = "qemu+ssh://root@192.168.1.3/system?sshauth=privkey&keyfile=${var.kvm_privkey}"
+  uri = "qemu+ssh://root@${var.kvm_server}/system?sshauth=privkey&keyfile=${var.kvm_privkey}"
 }
 
 
