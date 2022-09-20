@@ -6,7 +6,7 @@ Set Requirement:
 1. Get an API Key from ArvanCloud Dashboard
 2. Set the Variable in variable.tf:
 
-
+```
 #Put Yout Api Key that you get from Arvancloud
 
 variable "ApiKey" {
@@ -42,6 +42,7 @@ variable "user_name" {
   type    = string
   default = "ubuntu"
 }
+```
 
 
 How To Use
