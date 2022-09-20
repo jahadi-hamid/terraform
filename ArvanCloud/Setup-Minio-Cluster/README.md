@@ -47,8 +47,9 @@ variable "user_name" {
 
 How To Use
 ----------
-
+````
 terraform init
 terraform plan
 #Use `-parallelism=1` for preventing 429 error for create multi VM at the sametime
 terraform apply -parallelism=1
+````
