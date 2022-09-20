@@ -1,6 +1,9 @@
 terraform Provider for ArvanCloud
+==================================
 
-How to use
+Set Variable
+------------
+
 1. Get an API Key from ArvanCloud Dashboard
 2. Set the Variable in variable.tf:
 
@@ -37,6 +40,7 @@ variable "user_name" {
 
 
 How To Use
+----------
 
 terraform init
 terraform plan
