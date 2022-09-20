@@ -1,6 +1,6 @@
 
 variable "vm_count" {
-  type = number
+  type        = number
   description = "input number of machine"
 }
 
