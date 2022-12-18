@@ -63,7 +63,7 @@ resource "local_file" "ansible_inventory" {
       username         = var.user_name
     }
   )
-  provisioner "local-exec" {
+/*   provisioner "local-exec" {
     command = "ansible-playbook -i inventory setup-minio.yml "
-  }
+  } */
 }

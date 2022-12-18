@@ -2,6 +2,7 @@ terraform {
   required_providers {
     libvirt = {
       source = "dmacvicar/libvirt"
+      version = "0.6.14"
     }
   }
 }
@@ -98,6 +99,3 @@ output "machin_names" {
   value = [libvirt_domain.k8s.*.name, libvirt_domain.k8s.*.network_interface.0.addresses]
 }
 
-terraform {
-  required_version = ">= 0.12"
-}

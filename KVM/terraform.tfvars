@@ -1,4 +1,4 @@
-kvm_server    = "192.168.1.3"
+kvm_server    = "192.168.1.101"
 kvm_privkey   = "/root/.ssh/qemu"
 ubuntu_img    = "/data/images/ubuntu-20.04-server-cloudimg-amd64-disk-kvm.img"
 storage_pool  = "/data/terraform-pool-ubuntu"
