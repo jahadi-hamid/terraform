@@ -39,7 +39,7 @@ variable "network_uuid" {
   type = string
 }
 variable "ip_range" {
-  
+
 }
 
 resource "arvan_iaas_abrak" "myabrak" {

@@ -24,6 +24,6 @@ variable "cluster_name" {
   default = "minio"
 }
 variable "ip_range" {
-  type = string
+  type    = string
   default = "192.168.10.0/24"
 }

@@ -8,8 +8,8 @@ module "abrak-sshkey-module" {
 module "abrak-subnet-module" {
   network-region = var.region
   source         = "./modules/private-network"
-  subnet_name    = "${var.cluster_name}"
-  ip_range       = "${var.ip_range}"
+  subnet_name    = var.cluster_name
+  ip_range       = var.ip_range
 }
 
 module "abrak-module" {
@@ -20,11 +20,11 @@ module "abrak-module" {
     module.abrak-sshkey-module,
     module.abrak-subnet-module
   ]
-  abrak-number = "${count.index}"
-  abrak-name  = "${var.cluster_name}-${count.index}"
-  ssh-keyname = module.abrak-sshkey-module.get-ssh-key.name
+  abrak-number = count.index
+  abrak-name   = "${var.cluster_name}-${count.index}"
+  ssh-keyname  = module.abrak-sshkey-module.get-ssh-key.name
   network_uuid = module.abrak-subnet-module.subnet-details.network_uuid
-  ip_range = "${var.ip_range}"
+  ip_range     = var.ip_range
 }
 
 /* # add extra public ip
@@ -56,7 +56,7 @@ resource "local_file" "ansible_inventory" {
       username         = var.user_name
     }
   )
-/*   provisioner "local-exec" {
+  /*   provisioner "local-exec" {
     command = "ansible-playbook -i inventory setup-minio.yml "
   } */
 }
