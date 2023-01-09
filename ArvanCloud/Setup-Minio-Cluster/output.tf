@@ -1,7 +1,7 @@
 output "hostnames-ips" {
   value = [
-    for index, v in arvan_iaas_network_attach.private-network-attach :
-    { "server-ip" : v.ip,
+    for index, v in module.abrak-module.* :
+    { "server-ip" : v.adresses.0,
       "server-name" : module.abrak-module[index].details-myabrak-id.name
     }
   ]

@@ -1,6 +1,6 @@
 variable "ApiKey" {
   type      = string
-  default   = "Apikey ************************"
+  default   = "Apikey ****"
   sensitive = true
 }
 variable "region" {
@@ -13,9 +13,17 @@ variable "key_path" {
 }
 variable "server-num" {
   type    = number
-  default = 4
+  default = 1
 }
 variable "user_name" {
   type    = string
   default = "ubuntu"
+}
+variable "cluster_name" {
+  type    = string
+  default = "minio"
+}
+variable "ip_range" {
+  type = string
+  default = "192.168.10.0/24"
 }

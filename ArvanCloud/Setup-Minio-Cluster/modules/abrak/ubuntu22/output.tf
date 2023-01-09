@@ -3,5 +3,9 @@ output "details-myabrak-id" {
 }
 
 output "adresses" {
-  value = arvan_iaas_abrak.myabrak.*.addresses
+  value = arvan_iaas_abrak.myabrak.addresses
+}
+
+output "privateip" {
+  value = arvan_iaas_network_attach.private-network-attach.ip
 }
