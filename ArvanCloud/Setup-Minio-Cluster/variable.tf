@@ -1,11 +1,11 @@
 variable "ApiKey" {
   type      = string
-  default   = "Apikey ****"
+  default   = "Apikey ***"
   sensitive = true
 }
 variable "region" {
   type    = string
-  default = "ir-thr-c2"
+  default = "ir-thr-c1"
 }
 variable "key_path" {
   type    = string
@@ -13,7 +13,7 @@ variable "key_path" {
 }
 variable "server-num" {
   type    = number
-  default = 1
+  default = 4
 }
 variable "user_name" {
   type    = string

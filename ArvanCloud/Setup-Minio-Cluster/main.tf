@@ -41,7 +41,18 @@ module "abrak-public-ip-module" {
 
 
 
-
+resource "local_file" "minio_hosts" {
+  depends_on = [
+    module.abrak-module
+  ]
+  filename = "minio.hosts"
+  content = templatefile("minio.hosts.tmpl",
+    {
+      minio_hostname = module.abrak-module.*.details-myabrak-id.name,
+      minio_prvip    = module.abrak-module.*.privateip,
+    }
+  )
+}
 
 resource "local_file" "ansible_inventory" {
   depends_on = [
@@ -50,8 +61,9 @@ resource "local_file" "ansible_inventory" {
   filename = "inventory"
   content = templatefile("inventory.tmpl",
     {
-      ansible_ip       = module.abrak-module.*.adresses.1,
+      ansible_ip       = module.abrak-module.*.publicip,
       ansible_hostname = module.abrak-module.*.details-myabrak-id.name,
+      ansible_prvip    = module.abrak-module.*.privateip,
       key_path         = var.key_path
       username         = var.user_name
     }
